@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="de" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=JetBrains+Mono:wght@300;400&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0C0C0A;--bg-card:#131311;--bg-modal:#181816;
+  --text:#F0EDE8;--muted:#6B6A65;--subtle:#2E2E2C;
+  --accent:#00E5A0;--adim:rgba(0,229,160,.07);--aborder:rgba(0,229,160,.22);
+  --border:rgba(255,255,255,.07);--bhover:rgba(0,229,160,.28);
+  --danger:#E24B4A;--ddim:rgba(226,75,74,.09);
+  --fd:'Syne','Noto Sans Arabic',sans-serif;
+  --fm:'JetBrains Mono','Noto Sans Arabic',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--fm);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+html[lang="ar"] body{font-family:'Noto Sans Arabic',sans-serif}
+html[lang="ar"] .hero-title{font-family:'Noto Sans Arabic',sans-serif;letter-spacing:0;line-height:1.15;font-size:clamp(2.4rem,6vw,5.5rem)}
+html[lang="ar"] .proj-title{font-family:'Noto Sans Arabic',sans-serif;letter-spacing:0}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:1rem 2.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);background:rgba(12,12,10,.92);backdrop-filter:blur(14px)}
+.nav-logo{font-family:var(--fd);font-size:.95rem;font-weight:800;color:var(--text);text-decoration:none;letter-spacing:.04em}
+.nav-logo span{color:var(--accent)}
+.nav-center{display:flex;gap:2rem;list-style:none}
+.nav-center a{color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:.12em;text-transform:uppercase;transition:color .2s}
+.nav-center a:hover{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:1rem}
+.lang-sw{display:flex;border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.lang-btn{background:transparent;border:none;cursor:pointer;padding:5px 11px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-family:var(--fm);transition:background .15s,color .15s}
+.lang-btn+.lang-btn{border-left:1px solid var(--border)}
+.lang-btn.active{background:var(--adim);color:var(--accent)}
+.lang-btn:hover:not(.active){color:var(--text);background:rgba(255,255,255,.04)}
+.edit-toggle{background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;padding:5px 14px;font-size:11px;letter-spacing:.06em;border-radius:3px;font-family:var(--fm);transition:all .2s}
+.edit-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.edit-toggle.on{background:var(--adim);border-color:var(--accent);color:var(--accent)}
+
+/* EDIT BANNER */
+#edit-banner{display:none;position:fixed;top:55px;left:0;right:0;z-index:190;background:rgba(0,229,160,.05);border-bottom:1px solid var(--aborder);padding:5px 2.5rem;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);text-align:center}
+body.edit-mode #edit-banner{display:block}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 2.5rem 7rem;position:relative;overflow:hidden}
+.hero-glow{position:absolute;top:-200px;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(0,229,160,.05) 0%,transparent 65%);pointer-events:none}
+html[dir="ltr"] .hero-glow{right:-200px}
+html[dir="rtl"] .hero-glow{left:-200px;right:auto}
+.hero-tag{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;opacity:0;animation:fadeUp .7s .2s forwards}
+.hero-title{font-family:var(--fd);font-size:clamp(2.8rem,7vw,6.5rem);font-weight:800;line-height:.93;letter-spacing:-.03em;color:var(--text);margin-bottom:2rem;opacity:0;animation:fadeUp .7s .4s forwards}
+.hero-title .dim{color:var(--subtle)}
+.hero-desc{max-width:520px;color:var(--muted);line-height:1.85;margin-bottom:3rem;opacity:0;animation:fadeUp .7s .6s forwards}
+.hero-cta{display:inline-flex;align-items:center;gap:.8rem;color:var(--accent);text-decoration:none;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding-bottom:3px;border-bottom:1px solid var(--accent);opacity:0;animation:fadeUp .7s .8s forwards;transition:gap .25s}
+.hero-cta:hover{gap:1.3rem}
+.scroll-hint{position:absolute;bottom:2.5rem;writing-mode:vertical-rl;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--subtle);opacity:0;animation:fadeIn 1s 1.8s forwards}
+html[dir="ltr"] .scroll-hint{right:2.5rem}
+html[dir="rtl"] .scroll-hint{left:2.5rem;right:auto}
+
+/* PROJECTS SECTION */
+.proj-section{padding:8rem 2.5rem;max-width:1280px;margin:0 auto}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4rem;gap:1.5rem}
+.section-label{display:flex;align-items:center;gap:1rem;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--subtle);flex:1}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.add-btn{display:none;background:var(--adim);border:1px solid var(--aborder);color:var(--accent);cursor:pointer;padding:7px 16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border-radius:3px;font-family:var(--fm);white-space:nowrap;transition:background .2s}
+.add-btn:hover{background:rgba(0,229,160,.13)}
+body.edit-mode .add-btn{display:block}
+
+/* GRID */
+.projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.card-wrap{position:relative}
+.card-actions{position:absolute;top:.75rem;z-index:10;display:none;gap:.4rem}
+html[dir="ltr"] .card-actions{right:.75rem}
+html[dir="rtl"] .card-actions{left:.75rem;right:auto}
+body.edit-mode .card-actions{display:flex}
+.ca-btn{width:30px;height:30px;border-radius:3px;border:1px solid var(--border);background:rgba(10,10,8,.9);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s}
+.ca-btn.ed:hover{border-color:var(--accent);color:var(--accent);background:var(--adim)}
+.ca-btn.dl:hover{border-color:var(--danger);color:var(--danger);background:var(--ddim)}
+.proj-card{background:var(--bg-card);border:1px solid var(--border);border-radius:3px;padding:2.25rem;transition:border-color .3s,transform .3s;position:relative;overflow:hidden;text-decoration:none;display:block;height:100%}
+.proj-card::after{content:'';position:absolute;inset:0;background:var(--adim);opacity:0;transition:opacity .3s;pointer-events:none}
+.proj-card:hover{border-color:var(--bhover);transform:translateY(-3px)}
+.proj-card:hover::after{opacity:1}
+.proj-card.featured{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:4rem;padding:3rem}
+.proj-num{font-size:10px;letter-spacing:.18em;color:var(--subtle);margin-bottom:1.75rem}
+.proj-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.1rem}
+.tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:var(--adim);border:1px solid rgba(0,229,160,.14);padding:2px 9px;border-radius:2px}
+.proj-title{font-family:var(--fd);font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:.7rem;line-height:1.2}
+.proj-desc{color:var(--muted);font-size:13px;line-height:1.75;margin-bottom:1.75rem}
+.proj-footer{display:flex;justify-content:space-between;align-items:center;padding-top:1.25rem;border-top:1px solid var(--border)}
+.proj-year{font-size:11px;color:var(--subtle)}
+.proj-link{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:.5rem;transition:gap .2s}
+.proj-card:hover .proj-link{gap:.8rem}
+.code-preview{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:3px;padding:1.75rem;font-size:12px;line-height:1.9;align-self:center;color:var(--muted)}
+.code-preview .kw{color:#C792EA}.code-preview .fn{color:var(--accent)}.code-preview .str{color:#F78C6C}.code-preview .cm{color:var(--subtle)}
+.empty-state{grid-column:1/-1;text-align:center;padding:5rem 2rem;color:var(--subtle);font-size:13px;border:1px dashed var(--border);border-radius:3px}
+
+/* SKILLS */
+.skills-strip{border-top:1px solid var(--border);padding:2.5rem;display:flex;flex-wrap:wrap;gap:1.75rem;align-items:center;max-width:1280px;margin:0 auto}
+.skills-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--subtle);white-space:nowrap}
+.skill-pill{font-size:11px;color:var(--muted);padding:4px 13px;border:1px solid var(--border);border-radius:2px;transition:border-color .2s,color .2s}
+.skill-pill:hover{border-color:var(--accent);color:var(--accent)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:2.5rem;display:flex;justify-content:space-between;align-items:center;color:var(--subtle);font-size:12px}
+footer a{color:var(--accent);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.75);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:2rem;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg-modal);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:2.5rem;width:100%;max-width:620px;max-height:88vh;overflow-y:auto;transform:translateY(12px);transition:transform .25s}
+.modal-overlay.open .modal{transform:none}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
+.modal-ttl{font-family:var(--fd);font-size:1.1rem;font-weight:700;color:var(--text)}
+.modal-x{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:22px;line-height:1;padding:2px;transition:color .15s}
+.modal-x:hover{color:var(--text)}
+.mtabs{display:flex;border:1px solid var(--border);border-radius:3px;overflow:hidden;width:fit-content;margin-bottom:1.75rem}
+.mtab{background:transparent;border:none;cursor:pointer;padding:6px 18px;font-size:11px;letter-spacing:.1em;color:var(--muted);font-family:var(--fm);transition:all .15s}
+.mtab+.mtab{border-left:1px solid var(--border)}
+.mtab.active{background:var(--adim);color:var(--accent)}
+.mpanel{display:none}.mpanel.active{display:block}
+.fg{margin-bottom:1.1rem}
+.fl{display:block;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:.45rem}
+.fi,.ft{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--fm);font-size:13px;padding:9px 12px;transition:border-color .2s;outline:none}
+.fi:focus,.ft:focus{border-color:var(--accent)}
+.ft{resize:vertical;min-height:80px}
+.ar-in{direction:rtl;text-align:right;font-family:'Noto Sans Arabic',sans-serif}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fcheck{display:flex;align-items:center;gap:.7rem;cursor:pointer;color:var(--muted);font-size:12px}
+.fcheck input{accent-color:var(--accent);width:15px;height:15px;cursor:pointer}
+.mdivider{height:1px;background:var(--border);margin:1.5rem 0}
+.mfoot{display:flex;justify-content:flex-end;gap:.75rem;margin-top:1.75rem}
+html[dir="rtl"] .mfoot{justify-content:flex-start}
+.btn-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;padding:8px 20px;border-radius:3px;font-size:12px;letter-spacing:.08em;font-family:var(--fm);transition:all .15s}
+.btn-cancel:hover{border-color:rgba(255,255,255,.2);color:var(--text)}
+.btn-save{background:var(--adim);border:1px solid var(--aborder);color:var(--accent);cursor:pointer;padding:8px 24px;border-radius:3px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-family:var(--fm);transition:all .15s}
+.btn-save:hover{background:rgba(0,229,160,.14)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s}
+.reveal.visible{opacity:1;transform:none}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem}
+  .nav-center{display:none}
+  .hero{padding:0 1.5rem 5rem}
+  .proj-section{padding:5rem 1.5rem}
+  .projects-grid{grid-template-columns:1fr}
+  .proj-card.featured{grid-template-columns:1fr}
+  .code-preview{display:none}
+  footer{flex-direction:column;gap:1rem;text-align:center;padding:2rem 1.5rem}
+  .skills-strip{padding:2rem 1.5rem;gap:1rem}
+}
+@media(max-width:500px){
+  .nav-right{gap:.5rem}
+  .lang-btn{padding:4px 7px}
+  .edit-toggle{padding:4px 10px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Portfolio<span>.</span></a>
+  <ul class="nav-center">
+    <li><a href="#projekte" data-i="nav_proj"></a></li>
+    <li><a href="#kontakt" data-i="nav_contact"></a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="lang-sw">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('ar')">AR</button>
+    </div>
+    <button class="edit-toggle" id="edit-toggle" onclick="toggleEdit()" title="Edit Mode">✏</button>
+  </div>
+</nav>
+
+<div id="edit-banner" data-i="edit_banner"></div>
+
+<div class="hero">
+  <div class="hero-glow"></div>
+  <p class="hero-tag" data-i="hero_tag"></p>
+  <h1 class="hero-title" id="hero-title"></h1>
+  <p class="hero-desc" data-i="hero_desc"></p>
+  <a href="#projekte" class="hero-cta" data-i="hero_cta"></a>
+  <span class="scroll-hint" data-i="scroll"></span>
+</div>
+
+<section class="proj-section" id="projekte">
+  <div class="section-header">
+    <div class="section-label"><span data-i="section_lbl"></span></div>
+    <button class="add-btn" onclick="openModal(null)" data-i="add_btn"></button>
+  </div>
+  <div class="projects-grid" id="grid"></div>
+</section>
+
+<div class="skills-strip">
+  <span class="skills-label" data-i="tech_stack"></span>
+  <span class="skill-pill">JavaScript</span><span class="skill-pill">TypeScript</span>
+  <span class="skill-pill">Python</span><span class="skill-pill">React</span>
+  <span class="skill-pill">Vue.js</span><span class="skill-pill">Node.js</span>
+  <span class="skill-pill">PostgreSQL</span><span class="skill-pill">Docker</span>
+  <span class="skill-pill">AWS</span><span class="skill-pill">Git</span>
+</div>
+
+<footer id="kontakt">
+  <div><span data-i="contact_ready"></span> · <a href="mailto:deine@email.de">deine@email.de</a></div>
+  <div>© 2025 [Dein Name]</div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h2 class="modal-ttl" id="modal-ttl"></h2>
+      <button class="modal-x" onclick="closeModal()">×</button>
+    </div>
+    <div class="mtabs" id="mtabs">
+      <button class="mtab active" onclick="switchMTab('de',this)">DE</button>
+      <button class="mtab" onclick="switchMTab('en',this)">EN</button>
+      <button class="mtab" onclick="switchMTab('ar',this)">AR</button>
+    </div>
+    <!-- DE -->
+    <div class="mpanel active" id="mp-de">
+      <div class="fg"><label class="fl">Titel (Deutsch)</label><input class="fi" id="f-title-de" placeholder="Projektname"></div>
+      <div class="fg"><label class="fl">Beschreibung (Deutsch)</label><textarea class="ft" id="f-desc-de" placeholder="Kurze Beschreibung…"></textarea></div>
+    </div>
+    <!-- EN -->
+    <div class="mpanel" id="mp-en">
+      <div class="fg"><label class="fl">Title (English)</label><input class="fi" id="f-title-en" placeholder="Project name"></div>
+      <div class="fg"><label class="fl">Description (English)</label><textarea class="ft" id="f-desc-en" placeholder="Short description…"></textarea></div>
+    </div>
+    <!-- AR -->
+    <div class="mpanel" id="mp-ar">
+      <div class="fg"><label class="fl">العنوان (عربي)</label><input class="fi ar-in" id="f-title-ar" placeholder="اسم المشروع"></div>
+      <div class="fg"><label class="fl">الوصف (عربي)</label><textarea class="ft ar-in" id="f-desc-ar" placeholder="وصف قصير…"></textarea></div>
+    </div>
+    <div class="mdivider"></div>
+    <div class="fg"><label class="fl">Tags <span style="opacity:.5;text-transform:none;letter-spacing:0">(comma-separated)</span></label><input class="fi" id="f-tags" placeholder="React, Node.js, Docker"></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Jahr / Year</label><input class="fi" id="f-year" type="number" min="2000" max="2099"></div>
+      <div class="fg"><label class="fl">Link (optional)</label><input class="fi" id="f-url" placeholder="https://..."></div>
+    </div>
+    <label class="fcheck"><input type="checkbox" id="f-featured"><span id="f-feat-lbl"></span></label>
+    <div class="mfoot">
+      <button class="btn-cancel" id="btn-cancel-lbl" onclick="closeModal()"></button>
+      <button class="btn-save" id="btn-save-lbl" onclick="saveProject()"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── TRANSLATIONS ── */
+const T={
+  de:{dir:'ltr',nav_proj:'Projekte',nav_contact:'Kontakt',hero_tag:'Software Developer · Frankfurt am Main',
+    hero_t:['Ich baue','digitale Lösungen','die wirken.'],dim:1,
+    hero_desc:'Full-Stack Entwickler mit Fokus auf saubere Architektur, performante Systeme und nutzerzentriertes Design. Offen für spannende Projekte.',
+    hero_cta:'Projekte ansehen →',section_lbl:'01 / Projekte',add_btn:'+ Projekt hinzufügen',
+    tech_stack:'Tech Stack',contact_ready:'Bereit für neue Projekte',
+    edit_banner:'✏  Bearbeitungsmodus — Karten bearbeiten oder löschen',
+    modal_add:'Neues Projekt',modal_edit:'Projekt bearbeiten',
+    cancel:'Abbrechen',save:'Speichern',feat_lbl:'Featured (großes Format)',
+    proj_link:'Zum Projekt',del_confirm:'Projekt wirklich löschen?',scroll:'scroll'},
+  en:{dir:'ltr',nav_proj:'Projects',nav_contact:'Contact',hero_tag:'Software Developer · Frankfurt am Main',
+    hero_t:['I build','digital solutions','that work.'],dim:1,
+    hero_desc:'Full-stack developer focused on clean architecture, high-performance systems, and user-centered design. Open to exciting projects.',
+    hero_cta:'View Projects →',section_lbl:'01 / Projects',add_btn:'+ Add Project',
+    tech_stack:'Tech Stack',contact_ready:'Available for new projects',
+    edit_banner:'✏  Edit mode active — edit or delete project cards',
+    modal_add:'New Project',modal_edit:'Edit Project',
+    cancel:'Cancel',save:'Save',feat_lbl:'Featured (large format)',
+    proj_link:'View Project',del_confirm:'Really delete this project?',scroll:'scroll'},
+  ar:{dir:'rtl',nav_proj:'المشاريع',nav_contact:'التواصل',hero_tag:'مطور برمجيات · فرانكفورت',
+    hero_t:['أبني','حلولاً رقمية','تُحدث فرقاً.'],dim:1,
+    hero_desc:'مطور Full-Stack متخصص في البنية البرمجية النظيفة والأنظمة عالية الأداء. متاح للمشاريع المثيرة.',
+    hero_cta:'← عرض المشاريع',section_lbl:'المشاريع / ٠١',add_btn:'+ إضافة مشروع',
+    tech_stack:'التقنيات المستخدمة',contact_ready:'متاح لمشاريع جديدة',
+    edit_banner:'✏  وضع التحرير — يمكنك تعديل أو حذف المشاريع',
+    modal_add:'مشروع جديد',modal_edit:'تعديل المشروع',
+    cancel:'إلغاء',save:'حفظ',feat_lbl:'مميز (تنسيق كبير)',
+    proj_link:'عرض المشروع',del_confirm:'هل تريد حذف هذا المشروع؟',scroll:'تمرير'}
+};
+
+/* ── STATE ── */
+let lang='de', editMode=false, editId=null;
+const KEY='portfolio_v3';
+const DEFAULTS=[
+  {id:'p1',featured:true,year:2024,url:'#',tags:['React','Node.js','PostgreSQL','ML'],
+    title:{de:'E-Commerce Platform mit KI-Empfehlungen',en:'E-Commerce Platform with AI Recommendations',ar:'منصة تجارة إلكترونية بالذكاء الاصطناعي'},
+    desc:{de:'Skalierbare Handelsplattform mit ML-Empfehlungssystem. 50.000+ Produkte, 10.000 tägliche Nutzer. Ladezeit um 60 % reduziert.',en:'Scalable commerce platform with ML recommendations. 50,000+ products, 10,000 daily users. 60% faster load times.',ar:'منصة تجارية مع توصيات ذكاء اصطناعي. أكثر من 50,000 منتج و10,000 مستخدم يومياً. تسريع التحميل 60٪.'}},
+  {id:'p2',featured:false,year:2024,url:'#',tags:['Python','FastAPI','Docker'],
+    title:{de:'Automatisierte CI/CD Pipeline',en:'Automated CI/CD Pipeline',ar:'خط أنابيب CI/CD تلقائي'},
+    desc:{de:'DevOps-Lösung für Tests und Deployments. Release-Zyklen von Tagen auf Stunden reduziert.',en:'DevOps solution for automated testing and deployments. Release cycles cut from days to hours.',ar:'حل DevOps لأتمتة الاختبار والنشر. تقليل دورات الإصدار من أيام إلى ساعات.'}},
+  {id:'p3',featured:false,year:2023,url:'#',tags:['TypeScript','GraphQL','AWS'],
+    title:{de:'Real-time Analytics Dashboard',en:'Real-time Analytics Dashboard',ar:'لوحة تحليلات في الوقت الفعلي'},
+    desc:{de:'Live-Datenvisualisierung für BI. WebSocket-basiert, unter 100 ms Latenz bei 1M+ Events.',en:'Live data visualization for BI. WebSocket-based, under 100ms latency at 1M+ events/day.',ar:'تصور بيانات مباشر لذكاء الأعمال. زمن استجابة أقل من 100ms.'}},
+  {id:'p4',featured:false,year:2023,url:'#',tags:['Vue.js','Firebase','PWA'],
+    title:{de:'Mobile-First SaaS App',en:'Mobile-First SaaS App',ar:'تطبيق SaaS للجوال'},
+    desc:{de:'Progressive Web App für Projektmanagement. Offline-fähig, 4.8 ★ Nutzerbewertung.',en:'Progressive Web App for project management. Offline-capable, rated 4.8★.',ar:'تطبيق ويب تقدمي لإدارة المشاريع. يعمل بدون اتصال، تقييم 4.8 ★.'}}
+];
+
+function load(){try{const s=localStorage.getItem(KEY);return s?JSON.parse(s):DEFAULTS.map(p=>({...p}))}catch{return DEFAULTS.map(p=>({...p}))}}
+function save(){localStorage.setItem(KEY,JSON.stringify(projects))}
+let projects=load();
+
+/* ── LANGUAGE ── */
+function setLang(l){
+  lang=l;const t=T[l];
+  document.documentElement.setAttribute('lang',l);
+  document.documentElement.setAttribute('dir',t.dir);
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent===l.toUpperCase()));
+  // hero title
+  document.getElementById('hero-title').innerHTML=t.hero_t.map((line,i)=>
+    `<span${i===t.dim?' class="dim"':''}>${line}</span>`).join('<br>');
+  // data-i
+  document.querySelectorAll('[data-i]').forEach(el=>{
+    const k=el.dataset.i;if(t[k]!==undefined)el.textContent=t[k];
+  });
+  document.getElementById('f-feat-lbl').textContent=t.feat_lbl;
+  document.getElementById('btn-cancel-lbl').textContent=t.cancel;
+  document.getElementById('btn-save-lbl').textContent=t.save;
+  renderGrid();
+}
+
+/* ── EDIT MODE ── */
+function toggleEdit(){
+  editMode=!editMode;
+  document.body.classList.toggle('edit-mode',editMode);
+  document.getElementById('edit-toggle').classList.toggle('on',editMode);
+}
+
+/* ── RENDER ── */
+function renderGrid(){
+  const grid=document.getElementById('grid');
+  grid.innerHTML='';
+  const t=T[lang];
+  if(!projects.length){
+    const msgs={de:'Noch keine Projekte — klicke auf „Projekt hinzufügen"',en:'No projects yet — click "Add Project"',ar:'لا توجد مشاريع بعد — انقر على «إضافة مشروع»'};
+    grid.innerHTML=`<div class="empty-state">${msgs[lang]}</div>`;return;
+  }
+  projects.forEach((p,idx)=>{
+    const num=String(idx+1).padStart(2,'0');
+    const title=p.title[lang]||p.title.de||'';
+    const desc=p.desc[lang]||p.desc.de||'';
+    const tags=(p.tags||[]).map(tag=>`<span class="tag">${tag}</span>`).join('');
+    const isFeat=!!p.featured;
+    const wrap=document.createElement('div');
+    wrap.className='card-wrap reveal';
+    if(isFeat)wrap.style.gridColumn='1/-1';
+    const inner=isFeat?`
+      <div>
+        <p class="proj-num">PROJECT_${num}</p>
+        <div class="proj-tags">${tags}</div>
+        <h2 class="proj-title">${title}</h2>
+        <p class="proj-desc">${desc}</p>
+        <div class="proj-footer"><span class="proj-year">${p.year}</span><span class="proj-link">${t.proj_link} →</span></div>
+      </div>
+      <div class="code-preview">
+        <div><span class="cm">// ${(title).substring(0,28)}</span></div>
+        <div><span class="kw">async function</span> <span class="fn">init</span>() {</div>
+        <div>&nbsp;&nbsp;<span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetch</span>();</div>
+        <div>&nbsp;&nbsp;<span class="kw">return</span> <span class="fn">render</span>(data);</div>
+        <div>}</div><br>
+        <div><span class="cm">// ✓ ${(p.tags||[])[0]||''}</span></div>
+        <div><span class="cm">// ✓ Production ready</span></div>
+      </div>` : `
+      <p class="proj-num">PROJECT_${num}</p>
+      <div class="proj-tags">${tags}</div>
+      <h2 class="proj-title">${title}</h2>
+      <p class="proj-desc">${desc}</p>
+      <div class="proj-footer"><span class="proj-year">${p.year}</span><span class="proj-link">${t.proj_link} →</span></div>`;
+    wrap.innerHTML=`
+      <div class="card-actions">
+        <button class="ca-btn ed" title="Edit" onclick="openModal('${p.id}')">✏</button>
+        <button class="ca-btn dl" title="Delete" onclick="delProject('${p.id}')">✕</button>
+      </div>
+      <a href="${p.url&&p.url!=='#'?p.url:'javascript:void(0)'}" class="proj-card${isFeat?' featured':''}" ${p.url&&p.url!=='#'?'target="_blank"':''}>${inner}</a>`;
+    grid.appendChild(wrap);
+  });
+  // reveal
+  document.querySelectorAll('.reveal').forEach((el,i)=>{
+    setTimeout(()=>el.classList.add('visible'),i*100+80);
+  });
+}
+
+/* ── DELETE ── */
+function delProject(id){
+  if(!confirm(T[lang].del_confirm))return;
+  projects=projects.filter(p=>p.id!==id);save();renderGrid();
+}
+
+/* ── MODAL ── */
+function openModal(id){
+  editId=id;const t=T[lang];
+  document.getElementById('modal-ttl').textContent=id?t.modal_edit:t.modal_add;
+  document.getElementById('f-feat-lbl').textContent=t.feat_lbl;
+  document.getElementById('btn-cancel-lbl').textContent=t.cancel;
+  document.getElementById('btn-save-lbl').textContent=t.save;
+  ['de','en','ar'].forEach(l=>{
+    document.getElementById('f-title-'+l).value='';
+    document.getElementById('f-desc-'+l).value='';
+  });
+  document.getElementById('f-tags').value='';
+  document.getElementById('f-year').value=new Date().getFullYear();
+  document.getElementById('f-url').value='';
+  document.getElementById('f-featured').checked=false;
+  if(id){
+    const p=projects.find(x=>x.id===id);
+    if(p){
+      ['de','en','ar'].forEach(l=>{
+        document.getElementById('f-title-'+l).value=p.title[l]||'';
+        document.getElementById('f-desc-'+l).value=p.desc[l]||'';
+      });
+      document.getElementById('f-tags').value=(p.tags||[]).join(', ');
+      document.getElementById('f-year').value=p.year||2024;
+      document.getElementById('f-url').value=p.url||'';
+      document.getElementById('f-featured').checked=!!p.featured;
+    }
+  }
+  switchMTab(lang,null);
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow='';editId=null;
+}
+function switchMTab(l,btn){
+  document.querySelectorAll('.mtab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.mpanel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('mp-'+l).classList.add('active');
+  if(btn){btn.classList.add('active')}
+  else{document.querySelectorAll('.mtab').forEach(b=>{if(b.textContent===l.toUpperCase())b.classList.add('active')})}
+}
+function saveProject(){
+  const title={},desc={};
+  ['de','en','ar'].forEach(l=>{
+    title[l]=document.getElementById('f-title-'+l).value.trim();
+    desc[l]=document.getElementById('f-desc-'+l).value.trim();
+  });
+  const hasTitle=title.de||title.en||title.ar;
+  if(!hasTitle){
+    const msg={de:'Bitte mindestens einen Titel eingeben.',en:'Please enter at least one title.',ar:'يرجى إدخال عنوان على الأقل.'};
+    alert(msg[lang]);return;
+  }
+  // fill missing with fallback
+  const fb=title.de||title.en||title.ar;
+  const df=desc.de||desc.en||desc.ar;
+  ['de','en','ar'].forEach(l=>{if(!title[l])title[l]=fb;if(!desc[l])desc[l]=df;});
+  const tags=document.getElementById('f-tags').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const year=parseInt(document.getElementById('f-year').value)||new Date().getFullYear();
+  const url=document.getElementById('f-url').value.trim();
+  const featured=document.getElementById('f-featured').checked;
+  if(featured)projects.forEach(p=>p.featured=false);
+  if(editId){
+    const idx=projects.findIndex(p=>p.id===editId);
+    if(idx>-1)projects[idx]={...projects[idx],title,desc,tags,year,url,featured};
+  }else{
+    projects.push({id:'p'+Date.now(),title,desc,tags,year,url,featured});
+  }
+  save();closeModal();renderGrid();
+}
+
+// close modal on overlay click
+document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal()});
+// ESC key
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+/* ── INIT ── */
+setLang('de');
+</script>
+</body>
+</html>

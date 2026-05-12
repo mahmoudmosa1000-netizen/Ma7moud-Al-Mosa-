@@ -158,8 +158,38 @@ html[lang="ar"] .hero-title {font-family:'Noto Sans Arabic',sans-serif;letter-sp
 .orb-3{width:380px;height:380px;background:var(--orb3);top:40%;left:40%;animation-duration:var(--dur-orb3);animation-delay:-14s}
 @keyframes orbFloat{0%{transform:translate(0,0) scale(1)}33%{transform:translate(32px,-48px) scale(1.05)}66%{transform:translate(-22px,30px) scale(.96)}100%{transform:translate(0,0) scale(1)}}
 
-.cursor-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);box-shadow:var(--glow-sm);transition:width .2s,background var(--dur-mode) ease}
-.cursor-ring{width:34px;height:34px;border:1.5px solid rgba(var(--accent-rgb),.52);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s,border-color .3s}
+.cursor-dot{
+  width:10px;height:10px;background:var(--accent);border-radius:50%;
+  position:fixed;pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 10px rgba(var(--accent-rgb),1),0 0 28px rgba(var(--accent-rgb),.65),0 0 55px rgba(var(--accent-rgb),.3);
+  transition:width .12s,height .12s,background var(--dur-mode) ease,box-shadow var(--dur-mode) ease;
+  mix-blend-mode:screen;
+}
+.cursor-ring{
+  width:40px;height:40px;
+  border:2px solid rgba(var(--accent-rgb),.72);
+  border-radius:50%;position:fixed;pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 12px rgba(var(--accent-rgb),.28),inset 0 0 12px rgba(var(--accent-rgb),.10);
+  transition:width .28s cubic-bezier(.2,1,.4,1),height .28s cubic-bezier(.2,1,.4,1),border-color .28s,box-shadow .28s;
+}
+.cursor-trail{
+  width:5px;height:5px;border-radius:50%;background:var(--accent);
+  position:fixed;pointer-events:none;z-index:9996;
+  transform:translate(-50%,-50%);
+  transition:background var(--dur-mode) ease;
+}
+.cursor-ripple{
+  position:fixed;border-radius:50%;pointer-events:none;z-index:9995;
+  border:2px solid rgba(var(--accent-rgb),.7);
+  transform:translate(-50%,-50%) scale(0);
+  animation:rippleOut .55s ease-out forwards;
+}
+@keyframes rippleOut{
+  0%  {transform:translate(-50%,-50%) scale(0);opacity:.9}
+  100%{transform:translate(-50%,-50%) scale(3.5);opacity:0}
+}
 
 #scroll-prog{position:fixed;top:0;left:0;height:2px;background:var(--accent);width:0%;z-index:999;box-shadow:var(--glow-sm);transition:width .1s linear}
 
@@ -692,37 +722,44 @@ footer a:hover{text-shadow:var(--glow-sm)}
         <div class="yy-ring-a"></div>
         <div class="yy-ring-b"></div>
 
-        <svg id="yySvg" viewBox="0 0 310 310" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 
-          <g transform="translate(155,155)">
+<svg id="yySvg" viewBox="0 0 310 310" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 
-            <!-- ① WEISSER HINTERGRUNDKREIS (Basis) -->
-            <circle r="148" fill="#ffffff"/>
+  <!-- *** NEU: clipPath ersetzt den fehlerhaften path *** -->
+  <defs>
+    <clipPath id="rightHalf">
+      <rect x="0" y="-148" width="148" height="296"/>
+    </clipPath>
+  </defs>
+  <!-- *** ENDE NEU *** -->
 
-            <!-- ② DUNKLE HÄLFTE (rechts) -->
-            <path d="M 0,-148
-                     A  74, 74 0 0 1  0,  0
-                     A  74, 74 0 0 0  0,148
-                     A 148,148 0 0 1  0,-148 Z"
-                  fill="#000000"/>
+  <g transform="translate(155,155)">
 
-            <!-- ③ WEISSER HALBKREIS oben — erzeugt die S-Kurve korrekt -->
-            <circle cx="0" cy="-74" r="74" fill="#ffffff"/>
+    <!-- ① WEISSER HINTERGRUNDKREIS (Basis) -->
+    <circle r="148" fill="#ffffff"/>
 
-            <!-- ④ SCHWARZER HALBKREIS unten — erzeugt die S-Kurve korrekt -->
-            <circle cx="0" cy="74" r="74" fill="#000000"/>
+    <!-- ② DUNKLE HÄLFTE (rechts) -->
+    <!-- *** GEÄNDERT: <path> entfernt, clipPath verwendet *** -->
+    <circle r="148" fill="#000000" clip-path="url(#rightHalf)"/>
+    <!-- *** ENDE GEÄNDERT *** -->
 
-            <!-- ⑤ SCHWARZER PUNKT in der WEISSEN Fläche (oben, cy=-74) -->
-            <circle id="dotDark" cx="0" cy="-74" r="25" fill="#000000"/>
+    <!-- ③ WEISSER HALBKREIS oben — erzeugt die S-Kurve korrekt -->
+    <circle cx="0" cy="-74" r="74" fill="#ffffff"/>
 
-            <!-- ⑥ WEISSER PUNKT in der SCHWARZEN Fläche (unten, cy=+74) -->
-            <circle id="dotLight" cx="0" cy="74" r="25" fill="#ffffff"/>
+    <!-- ④ SCHWARZER HALBKREIS unten — erzeugt die S-Kurve korrekt -->
+    <circle cx="0" cy="74" r="74" fill="#000000"/>
 
-            <!-- ⑦ ÄUSSERER RAND -->
-            <circle r="147" fill="none" stroke="#000000" stroke-width="2.5"/>
+    <!-- ⑤ SCHWARZER PUNKT in der WEISSEN Fläche (oben, cy=-74) -->
+    <circle id="dotDark" cx="0" cy="-74" r="25" fill="#000000"/>
 
-          </g>
-        </svg>
+    <!-- ⑥ WEISSER PUNKT in der SCHWARZEN Fläche (unten, cy=+74) -->
+    <circle id="dotLight" cx="0" cy="74" r="25" fill="#ffffff"/>
+
+    <!-- ⑦ ÄUSSERER RAND -->
+    <circle r="147" fill="none" stroke="#000000" stroke-width="2.5"/>
+
+  </g>
+</svg>
 
         <!-- Partikel werden per JS eingefügt -->
         <div id="yyPart"></div>
@@ -890,14 +927,28 @@ const PROJECTS = [
 ];
 
 /* ═══════════════════════════════════════════════════════════════════
-   §JS-4  THEME / MODE / LANGUAGE
+   §JS-4  THEME / MODE / LANGUAGE  — mit localStorage-Persistenz
    ═══════════════════════════════════════════════════════════════════ */
-let LANG = 'de', MODE = 'auto';
+let LANG = localStorage.getItem('pf_lang') || 'de';
+let MODE = localStorage.getItem('pf_mode') || 'auto';
+let COLOR= localStorage.getItem('pf_color')|| 'teal';
+
+/* Gespeicherte Einstellungen sofort anwenden (verhindert Flackern) */
+(function applyStored(){
+  const r = document.documentElement;
+  r.setAttribute('data-color', COLOR);
+  r.setAttribute('data-mode',  MODE);
+  const mBtn = document.getElementById('modeBtn');
+  if(mBtn) mBtn.textContent = MODE === 'light' ? '☀' : '🌙';
+})();
 
 function setColor(c, btn) {
+  COLOR = c;
+  localStorage.setItem('pf_color', c);
   document.documentElement.setAttribute('data-color', c);
   document.querySelectorAll('.th-dot').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
+  else document.querySelector(`.th-dot[data-color="${c}"]`)?.classList.add('active');
 }
 
 function toggleMode() {
@@ -905,10 +956,12 @@ function toggleMode() {
   MODE = (MODE === 'auto' || MODE === 'dark') ? 'light' : 'dark';
   root.setAttribute('data-mode', MODE);
   btn.textContent = MODE === 'light' ? '☀' : '🌙';
+  localStorage.setItem('pf_mode', MODE);
 }
 
 function setLang(l) {
   LANG = l;
+  localStorage.setItem('pf_lang', l);
   const t = T[l];
   document.documentElement.setAttribute('lang', l);
   document.documentElement.setAttribute('dir', t.dir);
@@ -1155,18 +1208,94 @@ function renderGrid() {
 })();
 
 /* ═══════════════════════════════════════════════════════════════════
-   §JS-8  CUSTOM CURSOR
+   §JS-8  CUSTOM CURSOR — Leuchtpur + Ripple + flexible Reaktion
    ═══════════════════════════════════════════════════════════════════ */
 (function(){
-  const dot=document.getElementById('cdot'),ring=document.getElementById('cring');
-  if(!dot)return;
-  let mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';});
-  (function t(){rx=lerp(rx,mx,.12);ry=lerp(ry,my,.12);ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(t);})();
-  document.querySelectorAll('a,button,.proj-card,.skill-pill,.th-dot,.lang-btn,.plat-btn').forEach(el=>{
-    el.addEventListener('mouseenter',()=>{ring.style.width='52px';ring.style.height='52px';ring.style.borderColor='rgba(var(--accent-rgb),.85)';});
-    el.addEventListener('mouseleave',()=>{ring.style.width='34px';ring.style.height='34px';ring.style.borderColor='rgba(var(--accent-rgb),.52)';});
+  const dot  = document.getElementById('cdot');
+  const ring = document.getElementById('cring');
+  if(!dot) return;
+
+  /* ── Trail-Punkte erzeugen ── */
+  const TRAIL_N = 9;
+  const trail   = [];
+  for(let i = 0; i < TRAIL_N; i++){
+    const t = document.createElement('div');
+    t.className = 'cursor-trail';
+    const frac = (i + 1) / TRAIL_N;          /* 0.11 … 1 */
+    t.style.cssText = `
+      width:${(5 - frac * 2.8).toFixed(1)}px;
+      height:${(5 - frac * 2.8).toFixed(1)}px;
+      opacity:${(0.55 - frac * 0.48).toFixed(2)};
+    `;
+    document.body.appendChild(t);
+    trail.push({ el: t, x: -100, y: -100 });
+  }
+
+  /* ── Zustand ── */
+  let mx = -200, my = -200;
+  let rx = -200, ry = -200;
+  /* Trail-Positionen als Ringpuffer */
+  const hist = Array.from({length: TRAIL_N * 3 + 4}, () => ({x:-200,y:-200}));
+  let hIdx = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top  = my + 'px';
+    /* Aktuelle Position in Verlauf schreiben */
+    hist[hIdx % hist.length] = {x: mx, y: my};
+    hIdx++;
   });
+
+  /* ── Klick-Ripple ── */
+  document.addEventListener('click', e => {
+    const r = document.createElement('div');
+    r.className = 'cursor-ripple';
+    r.style.left   = e.clientX + 'px';
+    r.style.top    = e.clientY + 'px';
+    r.style.width  = '40px';
+    r.style.height = '40px';
+    document.body.appendChild(r);
+    setTimeout(() => r.remove(), 600);
+  });
+
+  /* ── Interaktive Elemente ── */
+  document.querySelectorAll('a,button,.proj-card,.skill-pill,.th-dot,.lang-btn,.plat-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      dot.style.width  = '16px';
+      dot.style.height = '16px';
+      ring.style.width  = '58px';
+      ring.style.height = '58px';
+      ring.style.borderColor = `rgba(var(--accent-rgb),.95)`;
+    });
+    el.addEventListener('mouseleave', () => {
+      dot.style.width  = '10px';
+      dot.style.height = '10px';
+      ring.style.width  = '40px';
+      ring.style.height = '40px';
+      ring.style.borderColor = `rgba(var(--accent-rgb),.72)`;
+    });
+  });
+
+  /* ── Render-Loop ── */
+  (function loop(){
+    /* Ring folgt mit sanftem Lerp */
+    rx = lerp(rx, mx, 0.15);
+    ry = lerp(ry, my, 0.15);
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+
+    /* Trail-Punkte aus Verlauf-Puffer */
+    for(let i = 0; i < TRAIL_N; i++){
+      const age = (i + 1) * 3;            /* je weiter hinten, desto älter */
+      const idx = ((hIdx - age) % hist.length + hist.length) % hist.length;
+      const pos = hist[idx];
+      trail[i].el.style.left = pos.x + 'px';
+      trail[i].el.style.top  = pos.y + 'px';
+    }
+
+    requestAnimationFrame(loop);
+  })();
 })();
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -1546,7 +1675,9 @@ document.getElementById('modeBtn').textContent =
 })();
 /* ADMIN-JS-END */
 
-setLang('de');
+/* Gespeicherte Sprache + Farbe wiederherstellen */
+setLang(LANG);
+setColor(COLOR);
 obAll();
 </script>
 </body>
